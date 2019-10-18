@@ -1,6 +1,6 @@
-#databases:
-#  - name: mattermost
-#    plan: starter
+databases:
+  - name: mattermost
+    plan: starter
 
 services:
   - type: pserv
@@ -16,7 +16,6 @@ services:
         generateValue: true
       - key: MINIO_SECRET_KEY
         generateValue: true
-
 #  - type: web
 #    name: mattermost
 #    env: docker
