@@ -1,6 +1,10 @@
 databases:
   - name: mattermost
     plan: starter
+  - name: matrix
+    plan: starter
+  - name: keycloak
+    plan: starter
 
 services:
   - type: pserv
@@ -22,6 +26,8 @@ services:
     plan: starter
     dockerfilePath: ./mattermost/Dockerfile
     dockerContext: ./mattermost
+    domains:
+      - chat.cachednerds.com
     disk:
       name: config
       mountPath: /mattermost/config
@@ -62,3 +68,57 @@ services:
           property: hostport
       - key: MM_FILESETTINGS_AMAZONS3SSL
         value: "false"
+#
+# Matrix Server
+#
+  - type: web
+    name: matrix
+    env: docker
+    plan: starter
+    dockerfilePath: ./matrix/Dockerfile
+    dockerContext: ./matrix
+    domains:
+      - matrix.cachednerds.com
+    disk:
+      name: config
+      mountPath: /data
+      sizeGB: 1
+#
+# Keycloak Server
+#
+  - type: web
+    name: keycloak
+    env: docker
+    plan: standard
+    repo: https://github.com/keycloak/keycloak-containers.git
+    dockerfilePath: ./server/Dockerfile
+    dockerContext: ./server
+    domains:
+      - keycloak.cachednerds.com
+    envVars:
+      - key: PROXY_ADDRESS_FORWARDING
+        value: true
+      - key: DB_VENDOR
+        value: POSTGRES
+      - key: DB_ADDR
+        fromDatabase:
+          name: keycloak
+          property: host
+      - key: DB_DATABASE
+        fromDatabase:
+          name: keycloak
+          property: database
+      - key: DB_SCHEMA
+        value: public
+      - key: DB_USER
+        fromDatabase:
+          name: keycloak
+          property: user
+      - key: DB_PASSWORD
+        fromDatabase:
+          name: keycloak
+          property: password
+      - key: KEYCLOAK_PASSWORD
+        generateValue: true
+      - key: KEYCLOAK_USER
+        generateValue: true
