@@ -122,3 +122,16 @@ services:
         generateValue: true
       - key: KEYCLOAK_USER
         generateValue: true
+  #
+  # Eliza Matrix Bot
+  #
+  - type: pserv
+    name: elizabot
+    env: docker
+    dockerfilePath: ./eliza-bot/Dockerfile
+    dockerContext: ./eliza-bot
+    envVars:
+      - key: ACCESS_TOKEN
+        sync: false
+      - key: MATRIX_SERVER_URI
+        sync: false
